@@ -57,7 +57,7 @@ const AddEvent = () => {
     "Team meetings",
     "Other meeting",
     "Invigilation",
-    "Workshop",
+    "session / workshop",
   ];
 
   useEffect(() => {
