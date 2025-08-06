@@ -53,7 +53,7 @@ const Calendar = () => {
     setSelectedEvent(null);
   };
   return (
-    <div className="w-full h-screen p-4 bg-white dark:bg-boxdark shadow-md rounded-lg dark:text-white">
+    <div className="w-full h-auto p-4 bg-white dark:bg-boxdark shadow-md rounded-lg dark:text-white">
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin]}
         initialView="dayGridMonth"
