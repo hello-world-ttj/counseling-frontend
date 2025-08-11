@@ -27,7 +27,7 @@ const Form: React.FC = () => {
 
   useEffect(() => {
     const fetchStudentData = async () => {
-      if (form.grNumber.trim().length > 2) {
+      if (form.grNumber.trim().length > 1) {
         const response = await getUserByStudent(form.grNumber);
 
         const studentData = response.data;
