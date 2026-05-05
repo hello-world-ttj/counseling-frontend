@@ -108,7 +108,7 @@ export const importUsersCSV = async (file: File): Promise<any | null> => {
   try {
     const formData = new FormData();
     formData.append("file", file);
-    const response = await axiosInstance.post(`/users/import-users-csv`, formData, {
+    const response = await axiosInstance.post(`/user-csv/import`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -125,7 +125,7 @@ export const importUsersCSV = async (file: File): Promise<any | null> => {
 
 export const exportUsersCSV = async (): Promise<void> => {
   try {
-    const response = await axiosInstance.get(`/users/export-users-csv`, {
+    const response = await axiosInstance.get(`/user-csv/export`, {
       responseType: "blob",
     });
     const url = window.URL.createObjectURL(new Blob([response.data]));
