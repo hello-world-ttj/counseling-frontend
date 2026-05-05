@@ -103,3 +103,41 @@ export const getUser = async (): Promise<any | null> => {
     return null;
   }
 };
+
+export const importUsersCSV = async (file: File): Promise<any | null> => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await axiosInstance.post(`/users/import-users-csv`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    toast.success(response.data.message);
+    return response.data;
+  } catch (error: any) {
+    const errorMsg =
+      error.response?.data?.message || "An error occurred during CSV upload";
+    toast.error(errorMsg);
+    throw error;
+  }
+};
+
+export const exportUsersCSV = async (): Promise<void> => {
+  try {
+    const response = await axiosInstance.get(`/users/export-users-csv`, {
+      responseType: "blob",
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "student.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("successfully exported");
+  } catch (error: any) {
+    toast.error("Failed to export users");
+    throw error;
+  }
+};
