@@ -125,7 +125,7 @@ export const importUsersCSV = async (file: File): Promise<any | null> => {
 
 export const exportUsersCSV = async (): Promise<void> => {
   try {
-    const response = await axiosInstance.get(`/user-csv/export`, {
+    const response = await axiosInstance.post(`/user-csv/export`, {
       responseType: "blob",
     });
     const url = window.URL.createObjectURL(new Blob([response.data]));
