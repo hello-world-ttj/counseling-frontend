@@ -11,12 +11,14 @@ const ECommerce: React.FC = () => {
     student_count: string;
     case_count: string;
     counsellor_count: string;
+    admin_count?: string;
     session_count: string;
     event_count: string;
   }>({
     student_count: "0",
     case_count: "0",
     counsellor_count: "0",
+    admin_count: "0",
     session_count: "0",
     event_count: "0",
   });
@@ -45,7 +47,7 @@ const ECommerce: React.FC = () => {
       ) : (
         <>
           {userType === "admin" && (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-5 2xl:gap-7.5">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-6 2xl:gap-7.5">
               <CardDataStats
                 title="Student Count"
                 total={dashboard?.student_count}
@@ -93,6 +95,28 @@ const ECommerce: React.FC = () => {
                   />
                   <path
                     d="M16 10H15.7C14.7 10 13.8 10.3 13 10.8C12.1 9.6 10.7 8.8 9.1 8.8H6.1C3.3 8.8 1 11.1 1 13.8V16.3C1 17 1.5 17.5 2.2 17.5H20.2C20.9 17.5 21.4 17 21.4 16.3V15.5C21.4 12.5 19 10 16 10ZM2.5 16V13.8C2.5 11.9 4.1 10.3 6 10.3H9.1C11 10.3 12.6 11.9 12.6 13.8V16H2.5ZM20 16H14V13.8C14 13.3 13.9 12.7 13.7 12.2C14.3 11.8 15.1 11.6 15.9 11.6H16.2C18.3 11.6 20.1 13.3 20.1 15.5V16H20Z"
+                    fill=""
+                  />
+                </svg>
+              </CardDataStats>
+              <CardDataStats
+                title="Admin accounts"
+                total={dashboard?.admin_count ?? "0"}
+              >
+                <svg
+                  className="fill-primary dark:fill-white"
+                  width="22"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 12C14.21 12 16 10.21 16 8C16 5.03 13.44 3 12 3C10.56 3 8 5.03 8 8C8 10.21 9.79 12 12 12Z"
+                    fill=""
+                  />
+                  <path
+                    d="M4 18.5C4 15.46 7.13 13 12 13C16.87 13 20 15.46 20 18.5V20H4V18.5Z"
                     fill=""
                   />
                 </svg>

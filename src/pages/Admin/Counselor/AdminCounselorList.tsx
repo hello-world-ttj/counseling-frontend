@@ -3,23 +3,32 @@ import { useState, useEffect } from "react";
 import AdminCounselorTable from "./AdminCounselorTable";
 import { getStaffUserCount } from "../../../api/userApi";
 
+type CounselorTab = "active" | "inactive";
+
 const AdminCounselorList = () => {
   const [searchValue, setSearchValue] = useState<string>("");
-  const [staffCount, setStaffCount] = useState<number | null>(null);
-  const [maxStaff, setMaxStaff] = useState<number>(10);
+  const [counsellorCount, setCounsellorCount] = useState<number | null>(null);
+  const [maxCounsellors, setMaxCounsellors] = useState<number>(10);
+  const [adminCount, setAdminCount] = useState<number | null>(null);
+  const [listTab, setListTab] = useState<CounselorTab>("active");
+
+  const refreshStaffCount = async () => {
+    const res = await getStaffUserCount();
+    if (res?.data) {
+      setCounsellorCount(res.data.currentCount);
+      setMaxCounsellors(res.data.maxCount);
+      if (typeof res.data.adminCount === "number") {
+        setAdminCount(res.data.adminCount);
+      }
+    }
+  };
 
   useEffect(() => {
-    const load = async () => {
-      const res = await getStaffUserCount();
-      if (res?.data) {
-        setStaffCount(res.data.currentCount);
-        setMaxStaff(res.data.maxCount);
-      }
-    };
-    load();
+    refreshStaffCount();
   }, []);
 
-  const isAtLimit = staffCount !== null && staffCount >= maxStaff;
+  const isAtLimit =
+    counsellorCount !== null && counsellorCount >= maxCounsellors;
 
   return (
     <>
@@ -28,15 +37,28 @@ const AdminCounselorList = () => {
           <h2 className="text-title-md2 font-semibold text-black dark:text-white ">
             Counselors
           </h2>
-          {staffCount !== null && (
-            <span className="inline-flex items-center rounded-full bg-meta-2 px-4 py-1.5 text-sm font-medium text-black dark:text-white dark:bg-meta-4 shrink-0">
-              {staffCount} / {maxStaff} users created
-            </span>
+          {counsellorCount !== null && listTab === "active" && (
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:flex-wrap sm:gap-3">
+              <span className="inline-flex items-center rounded-full bg-meta-2 px-4 py-1.5 text-sm font-medium text-black dark:text-white dark:bg-meta-4 shrink-0">
+                {counsellorCount} / {maxCounsellors} active counsellors (licensed)
+              </span>
+              {adminCount !== null && (
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Admin accounts (not in this limit):{" "}
+                  <strong className="text-black dark:text-white">
+                    {adminCount}
+                  </strong>
+                </span>
+              )}
+            </div>
           )}
         </div>
         <div className="relative w-full max-w-xs">
           <div className="relative flex items-center bg-white dark:bg-graydark  rounded-lg shadow-md">
-            <button type="button" className="absolute left-3 top-1/2 -translate-y-1/2">
+            <button
+              type="button"
+              className="absolute left-3 top-1/2 -translate-y-1/2"
+            >
               <svg
                 className="fill-gray-500 fill-primary"
                 width="20"
@@ -69,60 +91,99 @@ const AdminCounselorList = () => {
             />
           </div>
         </div>
-        {isAtLimit ? (
-          <span
-            className="inline-flex items-center justify-center gap-2.5 bg-gray-400 py-4 px-10 text-center font-medium text-white cursor-not-allowed opacity-90 lg:px-8 xl:px-10"
-            title="User limit reached"
-          >
-            <span>
-              <svg
-                className="fill-current"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M10 0C9.44772 0 9 0.44772 9 1V9H1C0.44772 9 0 9.44772 0 10C0 10.5523 0.44772 11 1 11H9V19C9 19.5523 9.44772 20 10 20C10.5523 20 11 19.5523 11 19V11H19C19.5523 11 20 10.5523 20 10C20 9.44772 19.5523 9 19 9H11V1C11 0.44772 10.5523 0 10 0Z"
-                  fill=""
-                />
-              </svg>
+        {listTab === "active" &&
+          (isAtLimit ? (
+            <span
+              className="inline-flex items-center justify-center gap-2.5 bg-gray-400 py-4 px-10 text-center font-medium text-white cursor-not-allowed opacity-90 lg:px-8 xl:px-10"
+              title="User limit reached"
+            >
+              <span>
+                <svg
+                  className="fill-current"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M10 0C9.44772 0 9 0.44772 9 1V9H1C0.44772 9 0 9.44772 0 10C0 10.5523 0.44772 11 1 11H9V19C9 19.5523 9.44772 20 10 20C10.5523 20 11 19.5523 11 19V11H19C19.5523 11 20 10.5523 20 10C20 9.44772 19.5523 9 19 9H11V1C11 0.44772 10.5523 0 10 0Z"
+                    fill=""
+                  />
+                </svg>
+              </span>
+              Add Counselor
             </span>
-            Add Counselor
-          </span>
-        ) : (
-          <Link
-            to="/add-counselor"
-            className="inline-flex items-center justify-center gap-2.5 bg-[#0072bc] py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
-          >
-            <span>
-              <svg
-                className="fill-current"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M10 0C9.44772 0 9 0.44772 9 1V9H1C0.44772 9 0 9.44772 0 10C0 10.5523 0.44772 11 1 11H9V19C9 19.5523 9.44772 20 10 20C10.5523 20 11 19.5523 11 19V11H19C19.5523 11 20 10.5523 20 10C20 9.44772 19.5523 9 19 9H11V1C11 0.44772 10.5523 0 10 0Z"
-                  fill=""
-                />
-              </svg>
-            </span>
-            Add Counselor
-          </Link>
-        )}
+          ) : (
+            <Link
+              to="/add-counselor"
+              className="inline-flex items-center justify-center gap-2.5 bg-[#0072bc] py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
+            >
+              <span>
+                <svg
+                  className="fill-current"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M10 0C9.44772 0 9 0.44772 9 1V9H1C0.44772 9 0 9.44772 0 10C0 10.5523 0.44772 11 1 11H9V19C9 19.5523 9.44772 20 10 20C10.5523 20 11 19.5523 11 19V11H19C19.5523 11 20 10.5523 20 10C20 9.44772 19.5523 9 19 9H11V1C11 0.44772 10.5523 0 10 0Z"
+                    fill=""
+                  />
+                </svg>
+              </span>
+              Add Counselor
+            </Link>
+          ))}
       </div>
 
-      {isAtLimit && (
+      {isAtLimit && listTab === "active" && (
         <p className="mb-4 text-sm text-amber-600 dark:text-amber-400">
           For creating any more users, please contact your IT Admin
         </p>
       )}
 
-      <AdminCounselorTable searchValue={searchValue} />
+      <div className="mb-6 flex flex-wrap gap-2 border-b border-stroke dark:border-strokedark">
+        <button
+          type="button"
+          onClick={() => setListTab("active")}
+          className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
+            listTab === "active"
+              ? "border-[#0072bc] text-[#0072bc]"
+              : "border-transparent text-gray-500 hover:text-black dark:hover:text-white"
+          }`}
+        >
+          Active counselors
+        </button>
+        <button
+          type="button"
+          onClick={() => setListTab("inactive")}
+          className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
+            listTab === "inactive"
+              ? "border-[#0072bc] text-[#0072bc]"
+              : "border-transparent text-gray-500 hover:text-black dark:hover:text-white"
+          }`}
+        >
+          Inactive counselors
+        </button>
+      </div>
+
+      {listTab === "inactive" && (
+        <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+          These accounts cannot sign in until reactivated. Counselors should
+          contact your IT administrator if they need access restored. You can
+          reactivate them below.
+        </p>
+      )}
+
+      <AdminCounselorTable
+        key={listTab}
+        searchValue={searchValue}
+        listMode={listTab}
+        onRosterChange={refreshStaffCount}
+      />
     </>
   );
 };

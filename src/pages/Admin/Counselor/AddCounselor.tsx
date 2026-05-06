@@ -44,15 +44,19 @@ const AddCounselor = () => {
   const { state } = location;
   const isEditMode = state?.editMode;
   const counselorId = state?.id;
-  const [staffCount, setStaffCount] = useState<number | null>(null);
-  const [maxStaff, setMaxStaff] = useState<number>(10);
+  const [counsellorCount, setCounsellorCount] = useState<number | null>(null);
+  const [maxCounsellors, setMaxCounsellors] = useState<number>(10);
+  const [adminCount, setAdminCount] = useState<number | null>(null);
 
   useEffect(() => {
     const loadStaffCount = async () => {
       const res = await getStaffUserCount();
       if (res?.data) {
-        setStaffCount(res.data.currentCount);
-        setMaxStaff(res.data.maxCount);
+        setCounsellorCount(res.data.currentCount);
+        setMaxCounsellors(res.data.maxCount);
+        if (typeof res.data.adminCount === "number") {
+          setAdminCount(res.data.adminCount);
+        }
       }
     };
     loadStaffCount();
@@ -60,8 +64,8 @@ const AddCounselor = () => {
 
   const isAtStaffLimit =
     !isEditMode &&
-    staffCount !== null &&
-    staffCount >= maxStaff;
+    counsellorCount !== null &&
+    counsellorCount >= maxCounsellors;
 
   useEffect(() => {
     if (isEditMode && counselorId) {
@@ -120,7 +124,7 @@ const AddCounselor = () => {
     e.preventDefault();
     if (isAtStaffLimit) {
       toast.error(
-        "User limit reached. For creating any more users, please contact your IT Admin."
+        "Counsellor limit reached (10 active). Deactivate a counsellor or contact your IT Admin."
       );
       return;
     }
@@ -204,8 +208,10 @@ const AddCounselor = () => {
       </div>
       {isAtStaffLimit && (
         <div className="mb-4 rounded-sm border border-amber-500 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-600 dark:bg-amber-900/20 dark:text-amber-200">
-          User limit reached ({staffCount} / {maxStaff}). For creating any more
-          users, please contact your IT Admin.
+          Counsellor limit reached ({counsellorCount} / {maxCounsellors} active
+          counsellors). Admin accounts are separate and not counted here
+          {adminCount !== null ? ` (${adminCount} admin active).` : "."}{" "}
+          Contact your IT Admin if you need changes.
         </div>
       )}
 

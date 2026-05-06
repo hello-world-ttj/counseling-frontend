@@ -5,7 +5,7 @@ export type User = {
   name: string;
   email: string;
   mobile: string;
-  status: string;
+  status?: boolean | string;
   userType: string;
   designation: string;
   gender: string;

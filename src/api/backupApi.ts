@@ -2,9 +2,14 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import axiosInstance from "./axiosintercepter";
 
-export const downloadBackup = async (): Promise<void> => {
+export type BackupFormat = "json" | "csv";
+
+export const downloadBackup = async (
+  backupFormat: BackupFormat = "json"
+): Promise<void> => {
   try {
     const response = await axiosInstance.get(`/backup`, {
+      params: { format: backupFormat },
       responseType: "blob",
     });
 
@@ -19,7 +24,10 @@ export const downloadBackup = async (): Promise<void> => {
     const link = document.createElement("a");
     const date = new Date().toISOString().split("T")[0];
     link.href = url;
-    link.setAttribute("download", `cbs-backup-${date}.zip`);
+    link.setAttribute(
+      "download",
+      `cbs-backup-${backupFormat}-${date}.zip`
+    );
     document.body.appendChild(link);
     link.click();
     link.remove();

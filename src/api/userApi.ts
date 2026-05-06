@@ -23,11 +23,21 @@ export const getUsers = async (params: {
   limit?: number;
   page?: number;
   type?: string;
-  user?:string;
+  user?: string;
+  activeOnly?: boolean;
+  inactiveOnly?: boolean;
 }): Promise<any | null> => {
   try {
     const response = await axiosInstance.get(`/users/list`, {
-      params,
+      params: {
+        searchQuery: params.searchQuery,
+        limit: params.limit,
+        page: params.page,
+        type: params.type,
+        user: params.user,
+        ...(params.activeOnly ? { activeOnly: "true" } : {}),
+        ...(params.inactiveOnly ? { inactiveOnly: "true" } : {}),
+      },
     });
     return response.data;
   } catch (error) {
