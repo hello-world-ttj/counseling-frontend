@@ -589,6 +589,34 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       </NavLink>
                     </li>
                     )}
+                    {userType === "admin" && (
+                    <li>
+                      {" "}
+                      <NavLink
+                        to="/database-backup"
+                        className={`group relative flex items-center gap-2.5 dark:text-blue-200  rounded-sm py-2 px-4 font-medium  duration-300 ease-in-out hover:bg-[#0072bc] hover:text-white dark:hover:bg-meta-4 ${
+                          pathname.includes("database-backup") &&
+                          "bg-[#0072bc] text-white"
+                        }`}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          className="size-6"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75M20.25 6.375v3.75m0 0V18a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 18v-8.625h15.75Z"
+                          />
+                        </svg>
+                        Database Backup
+                      </NavLink>
+                    </li>
+                    )}
                     <li>
                       {" "}
                       <NavLink

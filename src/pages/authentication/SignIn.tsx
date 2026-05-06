@@ -32,7 +32,11 @@ const SignIn: React.FC = () => {
         toast.error("Invalid login credentials");
       }
     } catch (err: any) {
-      toast.error(err.message || "Something went wrong!");
+      const msg =
+        typeof err?.message === "string" && err.message.trim()
+          ? err.message.trim()
+          : "Unable to sign in. Please try again.";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -48,7 +52,11 @@ const SignIn: React.FC = () => {
       await sendOtp({ email });
       setOtpSent(true);
     } catch (error: any) {
-      toast.error(error.message);
+      const msg =
+        typeof error?.message === "string" && error.message.trim()
+          ? error.message.trim()
+          : "Unable to send OTP. Please try again.";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -66,7 +74,11 @@ const SignIn: React.FC = () => {
       setForgotPassword(false);
       setOtpSent(false);
     } catch (error: any) {
-      toast.error(error.message);
+      const msg =
+        typeof error?.message === "string" && error.message.trim()
+          ? error.message.trim()
+          : "Unable to reset password. Please try again.";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

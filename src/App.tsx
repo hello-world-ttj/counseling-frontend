@@ -15,6 +15,7 @@ import AddReport from "./pages/Admin/Report/AddReport";
 import AdminPassword from "./pages/Admin/Settings/AdminPassword";
 import AdminProfile from "./pages/Admin/Settings/AdminProfile";
 import ImportUsers from "./pages/Admin/Settings/ImportUsers";
+import BackupDatabase from "./pages/Admin/Settings/BackupDatabase";
 
 import AdminCounselorList from "./pages/Admin/Counselor/AdminCounselorList";
 import AddCounselor from "./pages/Admin/Counselor/AddCounselor";
@@ -122,6 +123,17 @@ function App() {
               <DefaultLayout>
                 <PageTitle title="ABLE || Settings" />
                 <ImportUsers />
+              </DefaultLayout>
+            </>
+          }
+        />
+        <Route
+          path="/database-backup"
+          element={
+            <>
+              <DefaultLayout>
+                <PageTitle title="ABLE || Database Backup" />
+                <BackupDatabase />
               </DefaultLayout>
             </>
           }

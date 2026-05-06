@@ -7,6 +7,7 @@ import SelectType from "../../../components/Admin/SelectType";
 import SelectGender from "../../../components/Admin/SelectGender";
 import {
   createUser,
+  getStaffUserCount,
   getUserById,
   updateUser,
   upload,
@@ -43,12 +44,30 @@ const AddCounselor = () => {
   const { state } = location;
   const isEditMode = state?.editMode;
   const counselorId = state?.id;
+  const [staffCount, setStaffCount] = useState<number | null>(null);
+  const [maxStaff, setMaxStaff] = useState<number>(10);
+
+  useEffect(() => {
+    const loadStaffCount = async () => {
+      const res = await getStaffUserCount();
+      if (res?.data) {
+        setStaffCount(res.data.currentCount);
+        setMaxStaff(res.data.maxCount);
+      }
+    };
+    loadStaffCount();
+  }, []);
+
+  const isAtStaffLimit =
+    !isEditMode &&
+    staffCount !== null &&
+    staffCount >= maxStaff;
 
   useEffect(() => {
     if (isEditMode && counselorId) {
       const fetchCounselor = async () => {
         const response = await getUserById(counselorId);
-        const counselor = response.data;
+        const counselor = response?.data;
 
         if (counselor) {
           setCounselorData({
@@ -63,7 +82,7 @@ const AddCounselor = () => {
           });
         }
         setPreview(
-          counselor.image ? `${VITE_APP_FILE_URL}${counselor.image}` : ""
+          counselor?.image ? `${VITE_APP_FILE_URL}${counselor.image}` : ""
         );
       };
       fetchCounselor();
@@ -99,6 +118,12 @@ const AddCounselor = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isAtStaffLimit) {
+      toast.error(
+        "User limit reached. For creating any more users, please contact your IT Admin."
+      );
+      return;
+    }
     setLoading(true);
 
     try {
@@ -131,9 +156,12 @@ const AddCounselor = () => {
       }
       navigate("/counselor");
     } catch (error: any) {
-      toast.error(error.message);
-    }
-    {
+      const msg =
+        typeof error?.message === "string"
+          ? error.message
+          : "Something went wrong";
+      toast.error(msg);
+    } finally {
       setLoading(false);
     }
   };
@@ -174,6 +202,13 @@ const AddCounselor = () => {
           {counselorId ? "Edit Counselor" : "Add Counselor"}
         </h2>
       </div>
+      {isAtStaffLimit && (
+        <div className="mb-4 rounded-sm border border-amber-500 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-600 dark:bg-amber-900/20 dark:text-amber-200">
+          User limit reached ({staffCount} / {maxStaff}). For creating any more
+          users, please contact your IT Admin.
+        </div>
+      )}
+
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <form onSubmit={handleSubmit}>
           <div className="p-6.5">
@@ -276,7 +311,8 @@ const AddCounselor = () => {
 
             <button
               type="submit"
-              className="flex w-full justify-center rounded bg-[#0072bc] p-3 font-medium text-gray hover:bg-opacity-90"
+              disabled={isAtStaffLimit}
+              className="flex w-full justify-center rounded bg-[#0072bc] p-3 font-medium text-gray hover:bg-opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? "Submitting..." : counselorId ? "Update" : "Submit"}
             </button>

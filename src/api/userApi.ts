@@ -1,6 +1,14 @@
 import { toast } from "react-toastify";
 import axiosInstance from "./axiosintercepter";
 
+export const getStaffUserCount = async (): Promise<any | null> => {
+  try {
+    const response = await axiosInstance.get(`/users/staff-count`);
+    return response.data;
+  } catch (error) {
+    return null;
+  }
+};
 export const createUser = async (data: any): Promise<any | null> => {
   try {
     const response = await axiosInstance.post(`/users`, data);

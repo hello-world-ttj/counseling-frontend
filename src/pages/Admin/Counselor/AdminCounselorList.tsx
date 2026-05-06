@@ -1,20 +1,42 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminCounselorTable from "./AdminCounselorTable";
+import { getStaffUserCount } from "../../../api/userApi";
 
 const AdminCounselorList = () => {
   const [searchValue, setSearchValue] = useState<string>("");
+  const [staffCount, setStaffCount] = useState<number | null>(null);
+  const [maxStaff, setMaxStaff] = useState<number>(10);
+
+  useEffect(() => {
+    const load = async () => {
+      const res = await getStaffUserCount();
+      if (res?.data) {
+        setStaffCount(res.data.currentCount);
+        setMaxStaff(res.data.maxCount);
+      }
+    };
+    load();
+  }, []);
+
+  const isAtLimit = staffCount !== null && staffCount >= maxStaff;
+
   return (
     <>
-      <div className="mb-7.5 flex flex-wrap gap-5 xl:gap-7.5 justify-between">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-start">
+      <div className="mb-7.5 flex flex-wrap gap-5 xl:gap-7.5 justify-between items-start">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-start flex-1 min-w-0">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white ">
             Counselors
           </h2>
+          {staffCount !== null && (
+            <span className="inline-flex items-center rounded-full bg-meta-2 px-4 py-1.5 text-sm font-medium text-black dark:text-white dark:bg-meta-4 shrink-0">
+              {staffCount} / {maxStaff} users created
+            </span>
+          )}
         </div>
         <div className="relative w-full max-w-xs">
           <div className="relative flex items-center bg-white dark:bg-graydark  rounded-lg shadow-md">
-            <button className="absolute left-3 top-1/2 -translate-y-1/2">
+            <button type="button" className="absolute left-3 top-1/2 -translate-y-1/2">
               <svg
                 className="fill-gray-500 fill-primary"
                 width="20"
@@ -47,28 +69,58 @@ const AdminCounselorList = () => {
             />
           </div>
         </div>
-        <Link
-          to="/add-counselor"
-          className="inline-flex items-center justify-center gap-2.5 bg-[#0072bc] py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
-        >
-          <span>
-            <svg
-              className="fill-current"
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M10 0C9.44772 0 9 0.44772 9 1V9H1C0.44772 9 0 9.44772 0 10C0 10.5523 0.44772 11 1 11H9V19C9 19.5523 9.44772 20 10 20C10.5523 20 11 19.5523 11 19V11H19C19.5523 11 20 10.5523 20 10C20 9.44772 19.5523 9 19 9H11V1C11 0.44772 10.5523 0 10 0Z"
-                fill=""
-              />
-            </svg>
+        {isAtLimit ? (
+          <span
+            className="inline-flex items-center justify-center gap-2.5 bg-gray-400 py-4 px-10 text-center font-medium text-white cursor-not-allowed opacity-90 lg:px-8 xl:px-10"
+            title="User limit reached"
+          >
+            <span>
+              <svg
+                className="fill-current"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M10 0C9.44772 0 9 0.44772 9 1V9H1C0.44772 9 0 9.44772 0 10C0 10.5523 0.44772 11 1 11H9V19C9 19.5523 9.44772 20 10 20C10.5523 20 11 19.5523 11 19V11H19C19.5523 11 20 10.5523 20 10C20 9.44772 19.5523 9 19 9H11V1C11 0.44772 10.5523 0 10 0Z"
+                  fill=""
+                />
+              </svg>
+            </span>
+            Add Counselor
           </span>
-          Add Counselor
-        </Link>
+        ) : (
+          <Link
+            to="/add-counselor"
+            className="inline-flex items-center justify-center gap-2.5 bg-[#0072bc] py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
+          >
+            <span>
+              <svg
+                className="fill-current"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M10 0C9.44772 0 9 0.44772 9 1V9H1C0.44772 9 0 9.44772 0 10C0 10.5523 0.44772 11 1 11H9V19C9 19.5523 9.44772 20 10 20C10.5523 20 11 19.5523 11 19V11H19C19.5523 11 20 10.5523 20 10C20 9.44772 19.5523 9 19 9H11V1C11 0.44772 10.5523 0 10 0Z"
+                  fill=""
+                />
+              </svg>
+            </span>
+            Add Counselor
+          </Link>
+        )}
       </div>
+
+      {isAtLimit && (
+        <p className="mb-4 text-sm text-amber-600 dark:text-amber-400">
+          For creating any more users, please contact your IT Admin
+        </p>
+      )}
 
       <AdminCounselorTable searchValue={searchValue} />
     </>
