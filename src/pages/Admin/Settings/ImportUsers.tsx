@@ -64,10 +64,17 @@ const ImportUsers = () => {
           }`}
         >
           <AiOutlineCloudDownload size={20} />
-          {isDownloading ? "Downloading..." : "Download Existing Users"}
+          {isDownloading ? "Downloading..." : "Download students (CSV)"}
         </button>
       </div>
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <p className="border-b border-stroke px-6.5 py-4 text-sm text-gray-600 dark:border-strokedark dark:text-gray-400">
+          Bulk CSV import only updates <strong className="text-black dark:text-white">students</strong>.
+          Rows are always imported as <strong className="text-black dark:text-white">student</strong> accounts;
+          counsellor and admin accounts are not created via CSV—use Add Counselor or add admins in the database.
+          Students not present in the uploaded file are marked inactive.
+          The CSV does not need a userType column; extra columns are ignored.
+        </p>
         <form onSubmit={handleSubmit}>
           <div className="p-6.5">
             <div className="mb-4.5">
